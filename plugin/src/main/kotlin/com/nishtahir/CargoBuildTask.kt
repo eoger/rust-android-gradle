@@ -152,6 +152,7 @@ open class CargoBuildTask : DefaultTask() {
                     environment("RUST_ANDROID_GRADLE_CC", cc)
                     environment("RUST_ANDROID_GRADLE_CC_LINK_ARG", "-Wl,-soname,lib${cargoExtension.libname!!}.so")
                 }
+                println(theCommandLine)
 
                 commandLine = theCommandLine
             }
