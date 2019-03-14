@@ -116,6 +116,7 @@ open class CargoBuildTask : DefaultTask() {
                                                  val realKey = key.substring(prefix.length)
                                                  project.logger.debug("Passing through environment variable '${key}' as '${realKey}=${value}'")
                                                  environment(realKey, value)
+                                                 println("export " + realKey + "=" + value)
                                              }
                 }
 
@@ -130,7 +131,9 @@ open class CargoBuildTask : DefaultTask() {
                     // documented; see https://github.com/rust-lang/cargo/issues/5690 and follow
                     // links from there.
                     environment("CARGO_TARGET_${toolchain_target}_CC", cc)
+                    println("export CARGO_TARGET_${toolchain_target}_CC" + "=" + cc)
                     environment("CARGO_TARGET_${toolchain_target}_AR", ar)
+                    println("export CARGO_TARGET_${toolchain_target}_AR" + "=" + ar)
 
                     val linker_wrapper =
                     if (System.getProperty("os.name").startsWith("Windows")) {
@@ -139,19 +142,26 @@ open class CargoBuildTask : DefaultTask() {
                         File(project.rootProject.buildDir, "linker-wrapper/linker-wrapper.sh")
                     }
                     environment("CARGO_TARGET_${toolchain_target}_LINKER", linker_wrapper.path)
+                    println("export CARGO_TARGET_${toolchain_target}_LINKER" + "=" + linker_wrapper.path)
 
                     // For build.rs in `cc` consumers: like "CC_i686-linux-android".  See
                     // https://github.com/alexcrichton/cc-rs#external-configuration-via-environment-variables.
                     environment("CC_${toolchain.target}", cc)
+                    println("export CC_${toolchain.target}" + "=" + cc)
                     environment("AR_${toolchain.target}", ar)
+                    println("export AR_${toolchain.target}" + "=" + ar)
 
                     // Configure our linker wrapper.
                     environment("RUST_ANDROID_GRADLE_PYTHON_COMMAND", cargoExtension.pythonCommand)
-                    environment("RUST_ANDROID_GRADLE_LINKER_WRAPPER_PY",
-                            File(project.rootProject.buildDir, "linker-wrapper/linker-wrapper.py").path)
+                    println("export RUST_ANDROID_GRADLE_PYTHON_COMMAND" + "=" + cargoExtension.pythonCommand)
+                    environment("RUST_ANDROID_GRADLE_LINKER_WRAPPER_PY", File(project.rootProject.buildDir, "linker-wrapper/linker-wrapper.py").path)
+                    println("export RUST_ANDROID_GRADLE_LINKER_WRAPPER_PY" + "=" + File(project.rootProject.buildDir, "linker-wrapper/linker-wrapper.py").path)
                     environment("RUST_ANDROID_GRADLE_CC", cc)
+                    println("export RUST_ANDROID_GRADLE_CC" + "=" + cc)
                     environment("RUST_ANDROID_GRADLE_CC_LINK_ARG", "-Wl,-soname,lib${cargoExtension.libname!!}.so")
+                    println("export RUST_ANDROID_GRADLE_CC_LINK_ARG" + "=-Wl,-soname,lib${cargoExtension.libname!!}.so")
                 }
+                println(theCommandLine)
 
                 commandLine = theCommandLine
             }
